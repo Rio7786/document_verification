@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relitrade – Verification Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #1a56db;
+      --blue-dark:  #1e40af;
+      --blue-light: #eff6ff;
+      --green:      #16a34a;
+      --green-dark: #15803d;
+      --green-light:#f0fdf4;
+      --text:       #0f172a;
+      --muted:      #64748b;
+      --border:     #e2e8f0;
+      --white:      #ffffff;
+      --bg:         #f8fafc;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    .header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+    }
+    .header img { height: 44px; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .header-badge {
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--green); background: var(--green-light);
+      padding: 6px 14px; border-radius: 100px;
+      border: 1px solid #bbf7d0;
+    }
+    .header-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+      50%       { box-shadow: 0 0 0 6px rgba(34,197,94,0.08); }
+    }
+
+    /* ── HERO SECTION ───────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f2a1a 100%);
+      padding: 72px 48px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(26,86,219,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(22,163,74,0.2) 0%, transparent 60%);
+    }
+    .hero-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 7px 18px; border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow span { color: #4ade80; }
+    .hero h1 {
+      font-size: 52px; font-weight: 800; line-height: 1.1;
+      color: #fff; margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, #60a5fa, #4ade80);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 18px; color: rgba(255,255,255,0.6);
+      line-height: 1.6; max-width: 500px; margin: 0 auto 40px;
+    }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-num {
+      font-size: 28px; font-weight: 800; color: #fff;
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 12px; color: rgba(255,255,255,0.45);
+      margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .hero-stat-div {
+      width: 1px; background: rgba(255,255,255,0.1); align-self: stretch;
+    }
+
+    /* ── MAIN CONTENT ───────────────────────────────── */
+    .main {
+      max-width: 1200px; margin: 0 auto;
+      padding: 60px 32px 80px;
+    }
+
+    .section-header {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+    .section-title {
+      font-size: 24px; font-weight: 800; color: var(--text);
+    }
+    .section-sub {
+      font-size: 14px; color: var(--muted); margin-top: 4px;
+    }
+    .section-badge {
+      font-size: 12px; font-weight: 600; color: var(--blue);
+      background: var(--blue-light); padding: 5px 14px;
+      border-radius: 100px; border: 1px solid #bfdbfe;
+    }
+
+    /* ── SERVICE CARDS — HORIZONTAL ROW LAYOUT ────── */
+    .cards-grid {
+      display: flex; flex-direction: column; gap: 16px;
+      margin-bottom: 60px;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .service-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 22px 28px;
+      text-decoration: none; color: var(--text);
+      transition: box-shadow 0.22s ease, border-color 0.22s ease, transform 0.18s ease;
+      position: relative; overflow: hidden;
+      animation: cardIn 0.45s ease both;
+    }
+    .service-card:nth-child(1) { animation-delay: 0.05s; }
+    .service-card:nth-child(2) { animation-delay: 0.11s; }
+    .service-card:nth-child(3) { animation-delay: 0.17s; }
+    .service-card:nth-child(4) { animation-delay: 0.23s; }
+    .service-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 5px; border-radius: 20px 0 0 20px;
+    }
+    .card-pan::before    { background: linear-gradient(180deg, #1a56db, #3b82f6); }
+    .card-aadhaar::before{ background: linear-gradient(180deg, #16a34a, #22c55e); }
+    .card-dl::before     { background: linear-gradient(180deg, #0891b2, #06b6d4); }
+    .card-gst::before    { background: linear-gradient(180deg, #7c3aed, #8b5cf6); }
+    .service-card:hover { transform: translateX(4px); }
+    .card-pan:hover    { border-color: #bfdbfe; box-shadow: 0 8px 32px rgba(26,86,219,0.10); }
+    .card-aadhaar:hover{ border-color: #bbf7d0; box-shadow: 0 8px 32px rgba(22,163,74,0.10); }
+    .card-dl:hover     { border-color: #a5f3fc; box-shadow: 0 8px 32px rgba(8,145,178,0.10); }
+    .card-gst:hover    { border-color: #ddd6fe; box-shadow: 0 8px 32px rgba(124,58,237,0.10); }
+    /* Card left: icon + text */
+    .card-left { display: flex; align-items: center; gap: 20px; padding-left: 12px; flex: 1; min-width: 0; }
+    .card-icon-wrap { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .card-pan    .card-icon-wrap { background: #eff6ff; }
+    .card-aadhaar .card-icon-wrap{ background: #f0fdf4; }
+    .card-dl     .card-icon-wrap { background: #ecfeff; }
+    .card-gst    .card-icon-wrap { background: #f5f3ff; }
+    .card-text { min-width: 0; }
+    .card-title { font-size: 16px; font-weight: 700; color: var(--text); }
+    .card-subtitle { font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+    .card-meta { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+    .card-tag { font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 3px 9px; border-radius: 6px; }
+    .card-pan     .card-tag { background: #eff6ff; color: #1a56db; }
+    .card-aadhaar .card-tag { background: #f0fdf4; color: #16a34a; }
+    .card-dl      .card-tag { background: #ecfeff; color: #0891b2; }
+    .card-gst     .card-tag { background: #f5f3ff; color: #7c3aed; }
+    .card-desc-inline { font-size: 12.5px; color: var(--muted); }
+    /* Card right: verify button */
+    .card-right { flex-shrink: 0; margin-left: 24px; }
+    .verify-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: "Plus Jakarta Sans", sans-serif; font-size: 13px; font-weight: 700;
+      padding: 12px 24px; border-radius: 14px; border: none; cursor: pointer;
+      text-decoration: none; transition: transform 0.15s, box-shadow 0.15s; white-space: nowrap;
+    }
+    .card-pan     .verify-pill { background: linear-gradient(135deg,#1a56db,#3b82f6); color:#fff; box-shadow:0 4px 16px rgba(26,86,219,0.30); }
+    .card-aadhaar .verify-pill { background: linear-gradient(135deg,#16a34a,#22c55e); color:#fff; box-shadow:0 4px 16px rgba(22,163,74,0.30); }
+    .card-dl      .verify-pill { background: linear-gradient(135deg,#0891b2,#06b6d4); color:#fff; box-shadow:0 4px 16px rgba(8,145,178,0.30); }
+    .card-gst     .verify-pill { background: linear-gradient(135deg,#7c3aed,#8b5cf6); color:#fff; box-shadow:0 4px 16px rgba(124,58,237,0.30); }
+    .verify-pill:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.18) !important; }
+    .verify-pill .pill-arrow { font-size: 15px; transition: transform 0.2s; }
+    .service-card:hover .pill-arrow { transform: translateX(3px); }
+
+    /* ── HOW IT WORKS ───────────────────────────────── */
+    .how-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      margin-bottom: 40px;
+    }
+    .how-title {
+      font-size: 20px; font-weight: 700;
+      margin-bottom: 36px; text-align: center;
+    }
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0;
+      position: relative;
+    }
+    .how-step {
+      text-align: center; padding: 0 16px;
+      position: relative;
+    }
+    .how-step:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -12px; top: 18px;
+      font-size: 18px; color: var(--border);
+    }
+    .how-step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), #3b82f6);
+      color: #fff; font-size: 16px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .how-step-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .how-step-desc  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    /* ── TRUST BAR ──────────────────────────────────── */
+    .trust-bar {
+      display: flex; align-items: center; justify-content: center;
+      gap: 40px; flex-wrap: wrap;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 40px;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 600; color: var(--muted);
+    }
+    .trust-item span { font-size: 20px; }
+
+    /* ── FOOTER ─────────────────────────────────────── */
+    .footer {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 24px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-left { font-size: 13px; color: var(--muted); }
+    .footer-right { font-size: 12px; color: var(--border); }
+
+    @media (max-width: 768px) {
+      .header { padding: 0 20px; }
+      .hero { padding: 48px 24px 56px; }
+      .hero h1 { font-size: 34px; }
+      .hero-stats { gap: 28px; }
+      .main { padding: 40px 20px 60px; }
+      .how-section { padding: 32px 20px; }
+      .how-step:not(:last-child)::after { display: none; }
+      .footer { flex-direction: column; gap: 8px; text-align: center; padding: 20px; }
+      .trust-bar { gap: 20px; }
+      .service-card { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px 20px 20px 24px; }
+      .card-right { align-self: stretch; }
+      .verify-pill { width: 100%; justify-content: center; }
+      .card-desc-inline { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <img src="assets/logo.png" alt="Relitrade">
+  <div class="header-right">
+    <div class="header-dot"></div>
+    <span class="header-badge">All Systems Live</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">🔐 Powered by IDfy &nbsp;|&nbsp; <span>Government-Backed Database</span></div>
+    <h1>Instant <em>Document</em><br>Verification</h1>
+    <p>Verify PAN, Aadhaar, Driving License and GST in seconds — directly from government records.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">4</div>
+        <div class="hero-stat-label">Documents</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">&lt;1s</div>
+        <div class="hero-stat-label">Response Time</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">Govt Source</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">256-bit</div>
+        <div class="hero-stat-label">Encrypted</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN DASHBOARD -->
+<main class="main">
+
+  <div class="section-header">
+    <div>
+      <div class="section-title">Choose Verification Type</div>
+      <div class="section-sub">Select a document to begin instant verification</div>
+    </div>
+    <div class="section-badge">4 Services Available</div>
+  </div>
+
+  <div class="cards-grid">
+
+    <a href="pan/pan.html" class="service-card card-pan">
+      <div class="card-left">
+        <div class="card-icon-wrap">💳</div>
+        <div class="card-text">
+          <div class="card-title">PAN Verification</div>
+          <div class="card-subtitle">Tax Identity Validation</div>
+          <div class="card-meta">
+            <span class="card-tag">NSDL</span>
+            <span class="card-desc-inline">Verify PAN against government database</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-right">
+        <span class="verify-pill">Verify <span class="pill-arrow">→</span></span>
+      </div>
+    </a>
+
+    <a href="aadhaar/aadhaar.html" class="service-card card-aadhaar">
+      <div class="card-left">
+        <div class="card-icon-wrap">🆔</div>
+        <div class="card-text">
+          <div class="card-title">Aadhaar Verification</div>
+          <div class="card-subtitle">National Identity Check</div>
+          <div class="card-meta">
+            <span class="card-tag">UIDAI</span>
+            <span class="card-desc-inline">Validate Aadhaar via UIDAI database</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-right">
+        <span class="verify-pill">Verify <span class="pill-arrow">→</span></span>
+      </div>
+    </a>
+
+    <a href="dl/dl.html" class="service-card card-dl">
+      <div class="card-left">
+        <div class="card-icon-wrap">🚗</div>
+        <div class="card-text">
+          <div class="card-title">Driving License</div>
+          <div class="card-subtitle">Vehicle Authority Check</div>
+          <div class="card-meta">
+            <span class="card-tag">SARATHI</span>
+            <span class="card-desc-inline">Verify license via RTO Sarathi portal</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-right">
+        <span class="verify-pill">Verify <span class="pill-arrow">→</span></span>
+      </div>
+    </a>
+
+    <a href="gst/gst.html" class="service-card card-gst">
+      <div class="card-left">
+        <div class="card-icon-wrap">🏢</div>
+        <div class="card-text">
+          <div class="card-title">GST Verification</div>
+          <div class="card-subtitle">Business Registration</div>
+          <div class="card-meta">
+            <span class="card-tag">GST PORTAL</span>
+            <span class="card-desc-inline">Check GSTIN status & filing details</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-right">
+        <span class="verify-pill">Verify <span class="pill-arrow">→</span></span>
+      </div>
+    </a>
+
+  </div>
+
+
+
+  <!-- HOW IT WORKS -->
+  <div class="how-section">
+    <div class="how-title">How It Works</div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <div class="how-step-title">Select Document</div>
+        <div class="how-step-desc">Choose the verification type from the dashboard</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <div class="how-step-title">Enter Details</div>
+        <div class="how-step-desc">Fill in the document number and required fields</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <div class="how-step-title">Verify Instantly</div>
+        <div class="how-step-desc">We query the government database in real-time</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <div class="how-step-title">View Results</div>
+        <div class="how-step-desc">See complete verified details on the result page</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-item"><span>🔒</span> 256-bit SSL Encrypted</div>
+    <div class="trust-item"><span>🏛️</span> Government Database</div>
+    <div class="trust-item"><span>⚡</span> Real-time Verification</div>
+    <div class="trust-item"><span>🛡️</span> Data Not Stored</div>
+    <div class="trust-item"><span>✅</span> IDfy Powered</div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-left">© 2026 Relitrade Financial Services. All rights reserved.</div>
+  <div class="footer-right">Verification powered by IDfy</div>
+</footer>
+
+</body>
+</html>

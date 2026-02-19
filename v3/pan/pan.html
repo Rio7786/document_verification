@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAN Verification – Relitrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #1a56db; --blue-dark: #1e40af;
+      --blue-light: #eff6ff; --blue-border: #bfdbfe;
+      --green: #16a34a; --green-light: #f0fdf4; --green-border: #bbf7d0;
+      --red: #dc2626; --red-light: #fef2f2; --red-border: #fecaca;
+      --yellow: #d97706; --yellow-light: #fffbeb; --yellow-border: #fde68a;
+      --text: #0f172a; --text2: #334155; --muted: #64748b;
+      --border: #e2e8f0; --bg: #f1f5f9; --white: #fff;
+    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* HEADER */
+    .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 48px; height: 68px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 1px 12px rgba(0,0,0,0.06); }
+    .header img { height: 42px; }
+    .back-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); text-decoration: none; padding: 8px 16px; border-radius: 10px; border: 1.5px solid var(--border); transition: all 0.2s; }
+    .back-btn:hover { color: var(--blue); border-color: var(--blue-border); background: var(--blue-light); }
+
+    /* PAGE */
+    .page { max-width: 640px; margin: 0 auto; padding: 36px 20px 100px; }
+
+    /* BREADCRUMB */
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--blue); }
+    .breadcrumb .sep { color: #cbd5e1; }
+    .breadcrumb .cur { color: var(--blue); font-weight: 600; }
+
+    /* FORM CARD */
+    .form-card { background: var(--white); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 20px rgba(0,0,0,0.07); animation: fadeUp 0.4s ease both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    .card-banner { background: linear-gradient(135deg, #1a56db 0%, #1e3fa3 100%); padding: 30px 36px 28px; position: relative; overflow: hidden; }
+    .card-banner::before { content:''; position:absolute; top:-50px; right:-50px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.06); }
+    .card-banner::after  { content:''; position:absolute; bottom:-70px; left:-20px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,0.04); }
+    .banner-eyebrow { font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.55); margin-bottom:8px; }
+    .banner-title { font-size:24px; font-weight:800; color:#fff; letter-spacing:-0.02em; margin-bottom:5px; }
+    .banner-sub { font-size:13px; color:rgba(255,255,255,0.6); }
+    .banner-icon { position:absolute; right:32px; top:50%; transform:translateY(-50%); font-size:60px; opacity:0.15; }
+
+    .form-body { padding: 32px 36px 36px; }
+    .field { margin-bottom: 20px; }
+    .field-label { display:block; font-size:11.5px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .input-wrap { position:relative; }
+    .input-wrap .ico { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; }
+    input[type="text"], input[type="date"] { width:100%; padding:13px 14px 13px 44px; border:1.5px solid var(--border); border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:500; background:var(--bg); color:var(--text); outline:none; transition:border-color 0.2s,box-shadow 0.2s,background 0.2s; }
+    input:focus { border-color:var(--blue); background:var(--white); box-shadow:0 0 0 4px rgba(26,86,219,0.08); }
+    input::placeholder { color:#b0bac5; }
+    #pan-number { text-transform:uppercase; font-weight:700; letter-spacing:0.08em; font-size:15px; }
+    .field-hint { font-size:12px; color:var(--muted); margin-top:6px; }
+
+    .verify-btn { width:100%; margin-top:10px; padding:15px 20px; background:linear-gradient(135deg,#1a56db,#1e3fa3); color:#fff; border:none; border-radius:14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; box-shadow:0 4px 20px rgba(26,86,219,0.4); transition:transform 0.15s,box-shadow 0.2s; }
+    .verify-btn:hover { transform:translateY(-1px); box-shadow:0 8px 28px rgba(26,86,219,0.45); }
+    .verify-btn:active { transform:translateY(1px); }
+    .verify-btn:disabled { background:#94a3b8; box-shadow:none; cursor:not-allowed; transform:none; }
+    .spinner { width:18px; height:18px; border:2.5px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .status-msg { margin-top:14px; padding:12px 16px; border-radius:10px; font-size:13px; font-weight:600; text-align:center; display:none; animation:pop 0.25s ease; }
+    @keyframes pop { from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);} }
+    .status-msg.loading { background:var(--blue-light); color:var(--blue); border:1px solid var(--blue-border); }
+    .status-msg.error   { background:var(--red-light);  color:var(--red);  border:1px solid var(--red-border); }
+
+    /* ══ RESULT SECTION ══ */
+    .result-section { display:none; margin-top:32px; }
+
+    /* Animation card */
+    .anim-card { background:var(--white); border-radius:24px; border:1px solid var(--border); padding:44px 36px 36px; text-align:center; margin-bottom:20px; box-shadow:0 2px 20px rgba(0,0,0,0.07); position:relative; overflow:hidden; }
+    .anim-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,#1a56db,#16a34a); }
+
+    .check-circle { width:88px; height:88px; border-radius:50%; margin:0 auto 22px; display:flex; align-items:center; justify-content:center; position:relative; }
+    .check-circle.success { background:linear-gradient(135deg,#1a56db 0%,#16a34a 100%); animation:circleIn 0.55s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+    .check-circle.fail    { background:linear-gradient(135deg,#dc2626,#b91c1c); animation:circleIn 0.55s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+    @keyframes circleIn { 0%{transform:scale(0);opacity:0;} 65%{transform:scale(1.15);opacity:1;} 100%{transform:scale(1);} }
+
+    .check-circle::after { content:''; position:absolute; inset:-6px; border-radius:50%; animation:ripple 1.8s ease-out 0.5s both; }
+    .check-circle.success::after { border:2px solid rgba(26,86,219,0.4); }
+    .check-circle.fail::after    { border:2px solid rgba(220,38,38,0.4); }
+    @keyframes ripple { 0%{transform:scale(1);opacity:1;} 100%{transform:scale(1.7);opacity:0;} }
+
+    .check-svg { width:38px; height:38px; }
+    .check-path { fill:none; stroke:#fff; stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:65; stroke-dashoffset:65; animation:drawStroke 0.45s ease 0.4s forwards; }
+    @keyframes drawStroke { to{stroke-dashoffset:0;} }
+    .cross-line { stroke:#fff; stroke-width:3.5; stroke-linecap:round; stroke-dasharray:30; stroke-dashoffset:30; }
+    .cross-line:nth-child(1) { animation:drawStroke 0.3s ease 0.4s forwards; }
+    .cross-line:nth-child(2) { animation:drawStroke 0.3s ease 0.62s forwards; }
+
+    .anim-label { font-size:22px; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin-bottom:6px; }
+    .anim-sub   { font-size:13px; color:var(--muted); line-height:1.6; max-width:340px; margin:0 auto 20px; }
+
+    .status-pills { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+    .spill { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; padding:6px 14px; border-radius:100px; }
+    .spill-green  { background:var(--green-light);  color:var(--green);  border:1px solid var(--green-border); }
+    .spill-blue   { background:var(--blue-light);   color:var(--blue);   border:1px solid var(--blue-border); }
+    .spill-red    { background:var(--red-light);    color:var(--red);    border:1px solid var(--red-border); }
+    .spill-yellow { background:var(--yellow-light); color:var(--yellow); border:1px solid var(--yellow-border); }
+
+    /* Data card */
+    .data-card { background:var(--white); border-radius:20px; border:1px solid var(--border); overflow:hidden; box-shadow:0 2px 20px rgba(0,0,0,0.07); margin-bottom:16px; animation:fadeUp 0.4s 0.12s ease both; }
+    .data-card-head { padding:18px 28px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:#fafbfc; }
+    .data-card-head-title { font-size:13px; font-weight:700; color:var(--text); }
+    .dch-badge { font-size:10.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:3px 10px; border-radius:100px; }
+    .dch-badge.found    { background:var(--green-light); color:var(--green); border:1px solid var(--green-border); }
+    .dch-badge.notfound { background:var(--red-light);   color:var(--red);   border:1px solid var(--red-border); }
+
+    .fields-grid { display:grid; grid-template-columns:1fr 1fr; }
+    .field-cell { padding:18px 24px; border-bottom:1px solid var(--border); border-right:1px solid var(--border); transition:background 0.15s; }
+    .field-cell:hover { background:#fafbff; }
+    .field-cell:nth-child(2n) { border-right:none; }
+    .field-cell.span2 { grid-column:1/-1; border-right:none; }
+
+    .fc-key { font-size:10.5px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+    .fc-val { font-size:14px; font-weight:600; color:var(--text); line-height:1.4; word-break:break-all; }
+    .fc-val.mono { font-family:'Courier New',monospace; font-size:15px; letter-spacing:0.06em; font-weight:700; color:var(--blue); }
+
+    .fpill { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:700; padding:3px 10px; border-radius:100px; }
+    .fpill-green  { background:var(--green-light);  color:var(--green); }
+    .fpill-blue   { background:var(--blue-light);   color:var(--blue); }
+    .fpill-red    { background:var(--red-light);    color:var(--red); }
+    .fpill-yellow { background:var(--yellow-light); color:var(--yellow); }
+
+    /* Match block */
+    .match-block { margin-bottom:16px; border-radius:16px; overflow:hidden; border:1px solid var(--border); animation:fadeUp 0.4s 0.22s ease both; }
+    .match-block-head { padding:14px 24px; font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--border); background:#fafbfc; }
+    .match-body { padding:18px 24px; background:var(--white); }
+    .match-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); }
+    .match-row:last-of-type { border-bottom:none; }
+    .match-label { font-size:13px; color:var(--text2); font-weight:500; }
+    .match-notice { margin-top:14px; padding:13px 16px; border-radius:10px; font-size:13px; font-weight:500; line-height:1.55; }
+    .match-notice.warn { background:var(--yellow-light); border:1px solid var(--yellow-border); color:var(--yellow); }
+    .match-notice.good { background:var(--green-light); border:1px solid var(--green-border); color:var(--green); }
+
+    /* Meta card */
+    .meta-card { background:var(--white); border-radius:16px; border:1px solid var(--border); padding:20px 24px; margin-bottom:20px; animation:fadeUp 0.4s 0.30s ease both; }
+    .meta-card-title { font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
+    .meta-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; }
+    .meta-item .mk { font-size:10.5px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+    .meta-item .mv { font-size:12px; font-weight:600; color:var(--text); font-family:'Courier New',monospace; word-break:break-all; }
+
+    /* Actions */
+    .result-actions { display:flex; gap:12px; animation:fadeUp 0.4s 0.36s ease both; }
+    .act-btn { flex:1; padding:13px 16px; border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:700; cursor:pointer; border:none; display:flex; align-items:center; justify-content:center; gap:7px; text-decoration:none; transition:transform 0.15s,box-shadow 0.15s; }
+    .act-btn:hover { transform:translateY(-1px); }
+    .act-primary { background:linear-gradient(135deg,#1a56db,#1e3fa3); color:#fff; box-shadow:0 4px 16px rgba(26,86,219,0.3); }
+    .act-outline { background:var(--white); color:var(--text); border:1.5px solid var(--border); }
+    .act-outline:hover { border-color:var(--blue); color:var(--blue); }
+
+    @media(max-width:600px) {
+      .header { padding:0 20px; }
+      .card-banner,.form-body { padding-left:24px; padding-right:24px; }
+      .fields-grid { grid-template-columns:1fr; }
+      .field-cell { border-right:none!important; }
+      .result-actions { flex-direction:column; }
+      .anim-card { padding:36px 24px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <img src="../assets/logo.png" alt="Relitrade">
+  <a href="../index.html" class="back-btn">← Dashboard</a>
+</header>
+
+<div class="page">
+  <div class="breadcrumb">
+    <a href="../index.html">Dashboard</a>
+    <span class="sep">›</span>
+    <span class="cur">PAN Verification</span>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="form-card">
+    <div class="card-banner">
+      <div class="banner-eyebrow">Document Verification</div>
+      <div class="banner-title">PAN Verification</div>
+      <div class="banner-sub">Cross-checked with NSDL Government Database</div>
+      <div class="banner-icon">💳</div>
+    </div>
+    <div class="form-body">
+
+      <div class="field">
+        <label class="field-label" for="pan-number">PAN Number</label>
+        <div class="input-wrap">
+          <span class="ico">🪪</span>
+          <input type="text" id="pan-number" placeholder="ABCDE1234F" maxlength="10" autocomplete="off">
+        </div>
+        <p class="field-hint">10-character alphanumeric — e.g. ABCDE1234F</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="pan-name">Name as per PAN</label>
+        <div class="input-wrap">
+          <span class="ico">👤</span>
+          <input type="text" id="pan-name" placeholder="Full name exactly as on card">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="pan-dob">Date of Birth</label>
+        <div class="input-wrap">
+          <span class="ico">📅</span>
+          <input type="date" id="pan-dob">
+        </div>
+      </div>
+
+      <button class="verify-btn" id="verify-btn" onclick="verifyPAN()">
+        <span id="btn-text">Verify PAN</span>
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-icon">→</span>
+      </button>
+      <div class="status-msg" id="status-msg"></div>
+
+    </div>
+  </div>
+
+  <!-- RESULT SECTION — shown after verify -->
+  <div class="result-section" id="result-section">
+
+    <!-- Animated check / cross -->
+    <div class="anim-card">
+      <div class="check-circle success" id="check-circle">
+        <svg class="check-svg" id="check-svg" viewBox="0 0 52 52">
+          <path class="check-path" d="M13 27 L22 36 L39 18"/>
+        </svg>
+      </div>
+      <div class="anim-label" id="anim-label">PAN Record Found</div>
+      <div class="anim-sub" id="anim-sub">Identity record located in the NSDL government database.</div>
+      <div class="status-pills" id="status-pills"></div>
+    </div>
+
+    <!-- Fetched data -->
+    <div class="data-card">
+      <div class="data-card-head">
+        <div class="data-card-head-title">📋 Fetched PAN Details</div>
+        <span class="dch-badge found" id="dch-badge">✓ ID FOUND</span>
+      </div>
+      <div class="fields-grid" id="fields-grid"></div>
+    </div>
+
+    <!-- Match analysis -->
+    <div class="match-block">
+      <div class="match-block-head">🔍 Name Match Analysis</div>
+      <div class="match-body" id="match-body"></div>
+    </div>
+
+    <!-- Request meta -->
+    <div class="meta-card">
+      <div class="meta-card-title">Request Details</div>
+      <div class="meta-grid" id="meta-grid"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="result-actions">
+      <a href="../index.html" class="act-btn act-outline">🏠 Dashboard</a>
+      <button class="act-btn act-outline" onclick="resetForm()">🔄 Verify Another</button>
+      <button class="act-btn act-primary" onclick="window.print()">🖨️ Print Result</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="../js/verify.js"></script>
+<script>
+  /* Auto-uppercase + strip non-alphanum */
+  document.getElementById('pan-number').addEventListener('input', function () {
+    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  });
+
+  async function verifyPAN() {
+    const panNum  = document.getElementById('pan-number').value.trim();
+    const panName = document.getElementById('pan-name').value.trim();
+    const panDOB  = document.getElementById('pan-dob').value;
+
+    if (!panNum || panNum.length !== 10) { showMsg('error','⚠️ Enter a valid 10-character PAN number.'); return; }
+    if (!panName) { showMsg('error','⚠️ Enter the name as per PAN card.'); return; }
+
+    setLoading(true);
+    showMsg('loading','🔄 Connecting to NSDL government database...');
+
+    try {
+      const data = await callVerifyAPI('pan', { pan_number: panNum, name: panName, dob: panDOB });
+      hideMsg();
+      renderResult(data, { pan_number: panNum, name: panName, dob: panDOB });
+    } catch (e) {
+      showMsg('error','❌ Could not reach server. Please try again.');
+      setLoading(false);
+    }
+  }
+
+  function renderResult(data, input) {
+    setLoading(false);
+
+    /* ── Parse real IDfy structure ── */
+    const src   = (data.source_output && data.source_output[0]) || {};
+    const match = src.match_result || {};
+    const found = src.status === 'id_found';
+    const nameMatch      = match.name;             // "exact_match" | "did_not_match" | "partial_match"
+    const reviewRequired = match.review_required;  // true | false
+
+    /* ── 1. Animated circle ── */
+    const circle = document.getElementById('check-circle');
+    const svgEl  = document.getElementById('check-svg');
+
+    if (found) {
+      circle.className = 'check-circle success';
+      svgEl.innerHTML  = `<path class="check-path" d="M13 27 L22 36 L39 18"/>`;
+      document.getElementById('anim-label').textContent = 'PAN Record Found';
+      document.getElementById('anim-sub').textContent   = 'Identity record located in the NSDL government database.';
+    } else {
+      circle.className = 'check-circle fail';
+      svgEl.innerHTML  = `<line class="cross-line" x1="16" y1="16" x2="36" y2="36"/>
+                           <line class="cross-line" x1="36" y1="16" x2="16" y2="36"/>`;
+      document.getElementById('anim-label').textContent = 'PAN Not Found';
+      document.getElementById('anim-sub').textContent   = 'No record found for this PAN in the government database.';
+    }
+
+    /* Status pills */
+    const pills = [];
+    if (found)                              pills.push(`<span class="spill spill-green">✓ ID Found</span>`);
+    else                                    pills.push(`<span class="spill spill-red">✗ Not Found</span>`);
+    if (nameMatch === 'exact_match')        pills.push(`<span class="spill spill-blue">✓ Name Matched</span>`);
+    if (nameMatch === 'did_not_match')      pills.push(`<span class="spill spill-red">✗ Name Mismatch</span>`);
+    if (nameMatch === 'partial_match')      pills.push(`<span class="spill spill-yellow">≈ Partial Match</span>`);
+    if (reviewRequired === true)            pills.push(`<span class="spill spill-yellow">⚠ Review Required</span>`);
+    if (reviewRequired === false && found)  pills.push(`<span class="spill spill-green">✓ No Review Needed</span>`);
+    document.getElementById('status-pills').innerHTML = pills.join('');
+
+    /* ── 2. Badge ── */
+    const badge = document.getElementById('dch-badge');
+    badge.textContent = found ? '✓ ID FOUND' : '✗ NOT FOUND';
+    badge.className   = 'dch-badge ' + (found ? 'found' : 'notfound');
+
+    /* ── 3. Fields — exact IDfy fields ── */
+    const fields = [
+      { key:'PAN Number',             val: src.pan_number || input.pan_number,  mono:true },
+      { key:'Record Status',          val: idPill(src.status),                  html:true },
+      { key:'Full Name (as per PAN)', val: src.pan_name   || '—',               span:true },
+      { key:'First Name',             val: src.first_name || '—' },
+      { key:'Middle Name',            val: src.middle_name|| '—' },
+      { key:'Last Name',              val: src.last_name  || '—' },
+      { key:'Name Match Result',      val: nmPill(nameMatch),                   html:true },
+      { key:'Review Required',        val: reviewPill(reviewRequired),           html:true },
+      { key:'Data Source',            val: src.type ? fmtSrc(src.type) : '—' },
+      { key:'Task Status',            val: cap(data.status || '')  },
+      { key:'Name You Entered',       val: input.name || '—' },
+      { key:'DOB You Entered',        val: input.dob  || '—' },
+    ];
+
+    document.getElementById('fields-grid').innerHTML = fields.map(f=>`
+      <div class="field-cell ${f.span?'span2':''}">
+        <div class="fc-key">${f.key}</div>
+        <div class="fc-val ${f.mono?'mono':''}">${f.html ? f.val : esc(String(f.val))}</div>
+      </div>`).join('');
+
+    /* ── 4. Match analysis ── */
+    let mb = `
+      <div class="match-row">
+        <span class="match-label">Name comparison result</span>
+        ${nmPill(nameMatch)}
+      </div>
+      <div class="match-row">
+        <span class="match-label">Manual review required</span>
+        ${reviewPill(reviewRequired)}
+      </div>`;
+
+    if (reviewRequired || nameMatch === 'did_not_match') {
+      mb += `<div class="match-notice warn">⚠️ <strong>Manual review recommended.</strong> The name you entered <em>"${esc(input.name)}"</em> did not exactly match the name on the PAN record <em>"${esc(src.pan_name||'—')}"</em>. Please verify spelling or try with the full name exactly as printed on the card.</div>`;
+    } else if (nameMatch === 'exact_match') {
+      mb += `<div class="match-notice good">✅ Name matched exactly with the government record. No further review required.</div>`;
+    } else if (nameMatch === 'partial_match') {
+      mb += `<div class="match-notice warn">≈ Partial name match detected. Please verify the full name with the card holder.</div>`;
+    }
+    document.getElementById('match-body').innerHTML = mb;
+
+    /* ── 5. Meta ── */
+    const metas = [
+      { k:'Request ID',    v: data.request_id    || '—' },
+      { k:'Task ID',       v: data.task_id        || '—' },
+      { k:'Group ID',      v: data.group_id       || '—' },
+      { k:'Completed At',  v: fmtDate(data.completed_at) },
+      { k:'Response Time', v: data.tat ? data.tat + 's' : '—' },
+      { k:'Status',        v: cap(data.status     || '') },
+    ];
+    document.getElementById('meta-grid').innerHTML = metas.map(m=>`
+      <div class="meta-item">
+        <div class="mk">${m.k}</div>
+        <div class="mv">${esc(m.v)}</div>
+      </div>`).join('');
+
+    /* ── 6. Show + scroll ── */
+    const sec = document.getElementById('result-section');
+    sec.style.display = 'block';
+    void sec.offsetHeight; // reflow for animation
+    setTimeout(() => sec.scrollIntoView({ behavior:'smooth', block:'start' }), 80);
+  }
+
+  /* ── Pills ── */
+  function idPill(v) {
+    const ok = v === 'id_found';
+    return `<span class="fpill ${ok?'fpill-green':'fpill-red'}">${ok?'✓ ID Found':'✗ Not Found'}</span>`;
+  }
+  function nmPill(v) {
+    if (!v) return '<span style="color:var(--muted)">—</span>';
+    const m = { exact_match:['fpill-blue','✓ Exact Match'], did_not_match:['fpill-red','✗ Did Not Match'], partial_match:['fpill-yellow','≈ Partial Match'] };
+    const [c,l] = m[v] || ['fpill-yellow', v.replace(/_/g,' ')];
+    return `<span class="fpill ${c}">${l}</span>`;
+  }
+  function reviewPill(v) {
+    if (v === true)  return `<span class="fpill fpill-yellow">⚠ Yes</span>`;
+    if (v === false) return `<span class="fpill fpill-green">✓ No</span>`;
+    return '<span style="color:var(--muted)">—</span>';
+  }
+
+  /* ── Utils ── */
+  function fmtSrc(v) { return v.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }
+  function fmtDate(dt) { if(!dt)return'—'; try{return new Date(dt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});}catch{return dt;} }
+  function cap(s) { return s?s.charAt(0).toUpperCase()+s.slice(1):'—'; }
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function showMsg(t,m){ const el=document.getElementById('status-msg'); el.className='status-msg '+t; el.textContent=m; el.style.display='block'; }
+  function hideMsg(){ document.getElementById('status-msg').style.display='none'; }
+  function setLoading(on){ document.getElementById('verify-btn').disabled=on; document.getElementById('btn-text').textContent=on?'Verifying...':'Verify PAN'; document.getElementById('spinner').style.display=on?'block':'none'; document.getElementById('btn-icon').style.display=on?'none':'inline'; }
+  function resetForm(){ document.getElementById('result-section').style.display='none'; document.getElementById('pan-number').value=''; document.getElementById('pan-name').value=''; document.getElementById('pan-dob').value=''; hideMsg(); window.scrollTo({top:0,behavior:'smooth'}); }
+</script>
+</body>
+</html>

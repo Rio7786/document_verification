@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aadhaar Verification – Relitrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #16a34a; --accent-dark: #15803d;
+      --accent-light: #f0fdf4; --accent-border: #bbf7d0;
+      --text: #0f172a; --muted: #64748b;
+      --border: #e2e8f0; --bg: #f8fafc; --white: #fff;
+    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 48px; height: 70px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 12px rgba(0,0,0,0.06); }
+    .header img { height: 44px; }
+    .back-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); text-decoration: none; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s; }
+    .back-btn:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-light); }
+    .page { max-width: 560px; margin: 0 auto; padding: 40px 20px 80px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    .breadcrumb a { color: var(--muted); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb .sep { color: var(--border); }
+    .breadcrumb .cur { color: var(--accent); font-weight: 600; }
+    .form-card { background: var(--white); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06); animation: slideUp 0.4s ease both; }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .form-card-header { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); padding: 32px 36px; position: relative; overflow: hidden; }
+    .form-card-header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+    .fch-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
+    .fch-title { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .fch-sub { font-size: 13px; color: rgba(255,255,255,0.65); }
+    .fch-icon { position: absolute; right: 36px; top: 50%; transform: translateY(-50%); font-size: 56px; opacity: 0.2; }
+    .form-body { padding: 36px; }
+    .field { margin-bottom: 22px; }
+    .field-label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .field-input-wrap { position: relative; }
+    .field-input-wrap .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+    input[type="text"], input[type="date"] { width: 100%; padding: 13px 14px 13px 44px; border: 1.5px solid var(--border); border-radius: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500; background: var(--bg); color: var(--text); outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+    input:focus { border-color: var(--accent); background: var(--white); box-shadow: 0 0 0 4px rgba(22,163,74,0.08); }
+    input::placeholder { color: #b0bac5; }
+    .field-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .verify-btn { width: 100%; padding: 15px; margin-top: 8px; background: linear-gradient(135deg, #16a34a, #15803d); color: #fff; border: none; border-radius: 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(22,163,74,0.35); }
+    .verify-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(22,163,74,0.4); }
+    .verify-btn:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
+    .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-msg { margin-top: 16px; padding: 13px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; text-align: center; display: none; }
+    .status-msg.loading { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .status-msg.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .result-section { margin-top: 28px; display: none; animation: slideUp 0.5s ease both; }
+    .success-anim-wrap { display: flex; flex-direction: column; align-items: center; padding: 36px 0 28px; background: var(--white); border-radius: 24px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .circle-anim { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #16a34a, #1a56db); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both; position: relative; }
+    @keyframes popIn { 0%{transform:scale(0);opacity:0;} 60%{transform:scale(1.12);opacity:1;} 100%{transform:scale(1);} }
+    .circle-anim::before { content:''; position:absolute; inset:-4px; border-radius:50%; background:linear-gradient(135deg,#16a34a,#1a56db); opacity:0.2; animation:ringPulse 1.5s ease-out 0.4s both; }
+    @keyframes ringPulse { 0%{transform:scale(1);opacity:0.3;} 100%{transform:scale(1.5);opacity:0;} }
+    .checkmark-svg { width: 40px; height: 40px; }
+    .checkmark-path { stroke:#fff; stroke-width:3.5; stroke-linecap:round; stroke-linejoin:round; fill:none; stroke-dasharray:60; stroke-dashoffset:60; animation:drawCheck 0.45s ease 0.35s forwards; }
+    @keyframes drawCheck { to { stroke-dashoffset:0; } }
+    .success-label { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .success-sub { font-size: 13px; color: var(--muted); }
+    .result-card { background: var(--white); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .result-card-head { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .result-card-head-title { font-size: 14px; font-weight: 700; }
+    .result-card-head-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 100px; background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; }
+    .result-field { padding: 18px 24px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+    .result-field:nth-child(2n) { border-right: none; }
+    .result-field.full { grid-column: 1 / -1; border-right: none; }
+    .rf-key { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .rf-val { font-size: 14px; font-weight: 600; color: var(--text); word-break: break-word; }
+    .rf-val.mono { font-family: 'Courier New', monospace; letter-spacing: 0.05em; }
+    .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+    .pill-green { background:#dcfce7; color:#15803d; }
+    .pill-blue  { background:#dbeafe; color:#1d4ed8; }
+    .pill-red   { background:#fee2e2; color:#dc2626; }
+    .meta-row { padding: 14px 24px; background: var(--bg); border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 10px; }
+    .meta-chip { font-size: 11px; color: var(--muted); background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; }
+    .result-actions { display: flex; gap: 12px; margin-top: 16px; }
+    .btn { flex:1; padding:13px; border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:700; cursor:pointer; border:none; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:7px; transition:transform 0.15s; }
+    .btn:hover { transform:translateY(-1px); }
+    .btn-primary { background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; box-shadow:0 4px 16px rgba(22,163,74,0.3); }
+    .btn-outline { background:var(--white); color:var(--text); border:1.5px solid var(--border); }
+    .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+    @media(max-width:560px){.header{padding:0 20px;}.form-card-header,.form-body{padding-left:24px;padding-right:24px;}.result-grid{grid-template-columns:1fr;}.result-field{border-right:none!important;}.result-actions{flex-direction:column;}}
+  </style>
+</head>
+<body>
+<header class="header">
+  <img src="../assets/logo.png" alt="Relitrade">
+  <a href="../index.html" class="back-btn">← Dashboard</a>
+</header>
+<div class="page">
+  <div class="breadcrumb">
+    <a href="../index.html">Dashboard</a><span class="sep">›</span><span class="cur">Aadhaar Verification</span>
+  </div>
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="fch-tag">Document Verification</div>
+      <div class="fch-title">Aadhaar Verification</div>
+      <div class="fch-sub">Validated via UIDAI Government Database</div>
+      <div class="fch-icon">🆔</div>
+    </div>
+    <div class="form-body">
+      <div class="field">
+        <label class="field-label" for="aadhaar-number">Aadhaar Number</label>
+        <div class="field-input-wrap">
+          <span class="icon">🪪</span>
+          <input type="text" id="aadhaar-number" placeholder="XXXX XXXX XXXX" maxlength="14">
+        </div>
+        <p class="field-hint">12-digit Aadhaar number (spaces optional)</p>
+      </div>
+      <div class="field">
+        <label class="field-label" for="aadhaar-name">Full Name</label>
+        <div class="field-input-wrap">
+          <span class="icon">👤</span>
+          <input type="text" id="aadhaar-name" placeholder="Name as per Aadhaar card">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="aadhaar-dob">Date of Birth</label>
+        <div class="field-input-wrap">
+          <span class="icon">📅</span>
+          <input type="date" id="aadhaar-dob">
+        </div>
+      </div>
+      <button class="verify-btn" id="verify-btn" onclick="verifyAadhaar()">
+        <span id="btn-text">Verify Aadhaar</span>
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-arrow">→</span>
+      </button>
+      <div class="status-msg" id="status-msg"></div>
+    </div>
+  </div>
+
+  <div class="result-section" id="result-section">
+    <div class="success-anim-wrap" id="success-anim">
+      <div class="circle-anim">
+        <svg class="checkmark-svg" viewBox="0 0 52 52">
+          <path class="checkmark-path" d="M14 27 L22 35 L38 19"/>
+        </svg>
+      </div>
+      <div class="success-label">Aadhaar Verified Successfully</div>
+      <div class="success-sub" id="success-sub">Record found in UIDAI database</div>
+    </div>
+    <div class="result-card" id="result-card">
+      <div class="result-card-head">
+        <div class="result-card-head-title">📋 Fetched Details</div>
+        <div class="result-card-head-badge" id="result-badge">✓ ID FOUND</div>
+      </div>
+      <div class="result-grid" id="result-grid"></div>
+      <div class="meta-row" id="meta-row"></div>
+    </div>
+    <div class="result-actions">
+      <a href="../index.html" class="btn btn-outline">🏠 Dashboard</a>
+      <button class="btn btn-outline" onclick="resetForm()">🔄 Verify Another</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/verify.js"></script>
+<script>
+  document.getElementById('aadhaar-number').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'');
+    this.value = v.replace(/(\d{4})(?=\d)/g,'$1 ').trim();
+  });
+
+  async function verifyAadhaar() {
+    const num  = document.getElementById('aadhaar-number').value.replace(/\s/g,'');
+    const name = document.getElementById('aadhaar-name').value.trim();
+    const dob  = document.getElementById('aadhaar-dob').value;
+    if (!num || num.length !== 12) { showMsg('error','⚠️ Enter a valid 12-digit Aadhaar number.'); return; }
+    if (!name) { showMsg('error','⚠️ Enter your full name.'); return; }
+    setLoading(true);
+    showMsg('loading','🔄 Connecting to UIDAI database...');
+    try {
+      const data = await callVerifyAPI('aadhaar', { aadhaar_number: num, name, dob });
+      hideMsg();
+      renderResult(data, { aadhaar_number: num, name, dob });
+    } catch(e) { showMsg('error','❌ Server error. Please try again.'); setLoading(false); }
+  }
+
+  function renderResult(data, input) {
+    const src   = (data.source_output && data.source_output[0]) || {};
+    const found = src.status === 'id_found';
+    const addr  = src.address || {};
+    const addrStr = typeof addr === 'object'
+      ? [addr.house, addr.street, addr.landmark, addr.locality, addr.district, addr.state, addr.pincode].filter(Boolean).join(', ')
+      : String(addr);
+
+    setLoading(false);
+    if (!found) {
+      document.getElementById('success-anim').querySelector('.circle-anim').style.background='linear-gradient(135deg,#dc2626,#b91c1c)';
+      document.getElementById('success-anim').querySelector('.success-label').textContent='Aadhaar Not Found';
+      document.getElementById('result-badge').textContent='✗ NOT FOUND';
+      document.getElementById('result-badge').style.cssText='background:#fee2e2;color:#dc2626;border:1px solid #fecaca;font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;';
+    }
+    document.getElementById('success-sub').textContent = `Source: ${fmtSource(src.type)} · Task: ${data.task_id || ''}`;
+
+    const gender = { M: 'Male', F: 'Female', T: 'Transgender' };
+    const fields = [
+      { key: 'Aadhaar Number', val: src.aadhaar_number || ('XXXX XXXX ' + input.aadhaar_number.slice(-4)), mono: true },
+      { key: 'Record Status',  val: idPill(src.status), html: true },
+      { key: 'Full Name',      val: src.full_name },
+      { key: 'Gender',         val: gender[src.gender] || src.gender },
+      { key: 'Date of Birth',  val: src.dob || src.date_of_birth },
+      { key: 'Care Of',        val: src.care_of },
+      { key: 'Address',        val: addrStr, full: true },
+      { key: 'Data Source',    val: '🏛️ ' + fmtSource(src.type) },
+    ].filter(f => f.val && String(f.val).trim() && String(f.val) !== 'undefined');
+
+    document.getElementById('result-grid').innerHTML = fields.map(f=>`
+      <div class="result-field ${f.full?'full':''}">
+        <div class="rf-key">${f.key}</div>
+        <div class="rf-val ${f.mono?'mono':''}">${f.html?f.val:esc(String(f.val))}</div>
+      </div>`).join('');
+
+    document.getElementById('meta-row').innerHTML = [
+      data.request_id   && `<span class="meta-chip">🔖 ${data.request_id}</span>`,
+      data.task_id      && `<span class="meta-chip">🆔 ${data.task_id}</span>`,
+      data.completed_at && `<span class="meta-chip">🕐 ${fmtDate(data.completed_at)}</span>`,
+      data.tat          && `<span class="meta-chip">⚡ ${data.tat}s</span>`,
+    ].filter(Boolean).join('');
+
+    document.getElementById('result-section').style.display='block';
+    setTimeout(()=>document.getElementById('result-section').scrollIntoView({behavior:'smooth',block:'start'}),100);
+  }
+
+  function idPill(v){const ok=v==='id_found';return`<span class="pill ${ok?'pill-green':'pill-red'}">${ok?'✓ ID Found':'✗ Not Found'}</span>`;}
+  function fmtSource(v){return v?v.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()):'Government Database';}
+  function fmtDate(dt){try{return new Date(dt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});}catch{return dt;}}
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function showMsg(t,m){const el=document.getElementById('status-msg');el.className='status-msg '+t;el.textContent=m;el.style.display='block';}
+  function hideMsg(){document.getElementById('status-msg').style.display='none';}
+  function setLoading(on){document.getElementById('verify-btn').disabled=on;document.getElementById('btn-text').textContent=on?'Verifying...':'Verify Aadhaar';document.getElementById('spinner').style.display=on?'block':'none';document.getElementById('btn-arrow').style.display=on?'none':'inline';}
+  function resetForm(){document.getElementById('result-section').style.display='none';document.getElementById('aadhaar-number').value='';document.getElementById('aadhaar-name').value='';document.getElementById('aadhaar-dob').value='';window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

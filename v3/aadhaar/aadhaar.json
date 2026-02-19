@@ -1,0 +1,35 @@
+[
+  {
+    "completed_at": "2026-02-19T10:15:22+05:30",
+    "created_at": "2026-02-19T10:15:22+05:30",
+    "group_id": "grp_1771473900",
+    "request_id": "a1234bc5-5d00-48b6-9ef8-d39f44815cd3",
+    "source_output": [
+      {
+        "aadhaar_number": "XXXX XXXX 4321",
+        "full_name": "RAHUL KUMAR SHARMA",
+        "dob": "15-08-1990",
+        "gender": "M",
+        "address": {
+          "house": "12",
+          "street": "MG Road",
+          "landmark": "Near City Mall",
+          "locality": "Bandra West",
+          "district": "Mumbai",
+          "state": "Maharashtra",
+          "pincode": "400050",
+          "country": "India"
+        },
+        "status": "id_found",
+        "care_of": "S/O SURESH SHARMA",
+        "email_hash": "a3f1b2c4d5e6...",
+        "mobile_hash": "9f8e7d6c5b4a...",
+        "share_code": "1234",
+        "type": "uidai"
+      }
+    ],
+    "status": "completed",
+    "task_id": "aadhaar_verification_12ab34cd56ef",
+    "tat": "0.134"
+  }
+]
